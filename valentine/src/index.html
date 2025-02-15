@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Letter</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #ff4d4d;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.5s ease;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            width: 100%;
+            height: 80px;
+            background-color: #ff3333;
+            clip-path: polygon(0 0, 50% 50%, 100% 0);
+            transform-origin: top;
+            transition: all 0.5s ease;
+            z-index: 3;
+        }
+
+        .envelope-content {
+            position: absolute;
+            width: 90%;
+            height: 90%;
+            background-color: white;
+            top: 5%;
+            left: 5%;
+            border-radius: 5px;
+            transition: all 0.5s ease;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #ff4d4d;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .envelope.open .envelope-content {
+            transform: translateY(-120px);
+        }
+
+        .main-content {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .main-content.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Carousel styles from previous version */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .carousel {
+            display: flex;
+            width: 100%;
+            height: 500px;
+            position: relative;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+
+        .card {
+            position: absolute;
+            width: 300px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 20px;
+            transition: all 0.5s ease;
+            cursor: pointer;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sticker {
+            font-size: 4rem;
+            margin: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        .message {
+            font-size: 1.5rem;
+            color: #ff4d4d;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        .subtext {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #ff4d4d;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .nav-button:hover {
+            background: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .prev { left: 20px; }
+        .next { right: 20px; }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .heart-decoration {
+            position: absolute;
+            font-size: 24px;
+            color: #ff4d4d;
+            animation: float 3s ease-in-out infinite;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Envelope -->
+    <div class="envelope-wrapper" id="envelope">
+        <div class="envelope">
+            <div class="envelope-flap"></div>
+            <div class="envelope-content">
+                Klik untuk membuka surat❤️
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content (Carousel) -->
+    <div class="main-content" id="mainContent">
+        <div class="carousel-container">
+            <button class="nav-button prev" onclick="navigate(-1)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            
+            <div class="carousel">
+                <!-- Card 1 -->
+                <div class="card" style="transform: translateX(-100%)">
+                    <div class="card-content">
+                        <div class="sticker">🌹</div>
+                        <div class="message">Happy Valentine's Day</div>
+                        <div class="subtext">
+                            Aku senang bisa mengenalmu tanpa disengaja,<br>
+                            ga nyangka juga bisa sampai sejauh sekarang
+                        </div>
+                        <div class="sticker">💝</div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="card" style="transform: translateX(0%)">
+                    <div class="card-content">
+                        <div class="sticker">🎀</div>
+                        <div class="message">Be My Valentine</div>
+                        <div class="subtext">
+                            Setiap saat bersamamu adalah hal terindah<br>
+                            yang pernah ku dapatkan
+                        </div>
+                        <div class="sticker">💖</div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="card" style="transform: translateX(100%)">
+                    <div class="card-content">
+                        <div class="sticker">🕊️</div>
+                        <div class="message">Love Is In The Air</div>
+                        <div class="subtext">
+                            Bersamamu, setiap hari terasa seperti<br>
+                            hari Valentine yang penuh cinta
+                        </div>
+                        <div class="sticker">💘</div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="card" style="transform: translateX(200%)">
+                     <div class="card-content">
+        <div class="sticker">🌟</div>
+        <div class="message">You're My Everything</div>
+        <div class="subtext">
+            Kamu adalah bintang yang menerangi<br>
+            setiap langkah dalam hidupku
+        </div>
+        <div class="sticker">✨</div>
+    </div>
+</div>
+
+<!-- Card 5 -->
+<div class="card" style="transform: translateX(300%)">
+    <div class="card-content">
+        <div class="sticker">🍫</div>
+        <div class="message">Sweet Like You</div>
+        <div class="subtext">
+            Semanis cokelat Valentine<br>
+            begitulah rasanya bersamamu
+        </div>
+        <div class="sticker">🎭</div>
+    </div>
+</div>
+
+<!-- Card 6 -->
+<div class="card" style="transform: translateX(400%)">
+    <div class="card-content">
+        <div class="sticker">💌</div>
+        <div class="message">Forever Yours</div>
+        <div class="subtext">
+            Dalam setiap detak jantungku<br>
+            tersimpan namamu selamanya
+        </div>
+        <div class="sticker">💫</div>
+    </div>
+</div>
+
+<!-- Card 7 -->
+<div class="card" style="transform: translateX(500%)">
+    <div class="card-content">
+        <div class="sticker">🎻</div>
+        <div class="message">Love's Symphony</div>
+        <div class="subtext">
+            aku dan kamu seperti musik<br>
+            indah dan abadi
+        </div>
+        <div class="sticker">🎼</div>
+    </div>
+</div>
+
+<!-- Card 8 -->
+<div class="card" style="transform: translateX(600%)">
+    <div class="card-content">
+        <div class="sticker">🌺</div>
+        <div class="message">My Dear Valentine</div>
+        <div class="subtext">
+            Seperti bunga yang mekar di musim semi<br>
+            begitulah aku padamu
+        </div>
+        <div class="sticker">🦋</div>
+    </div>
+</div>
+            </div>
+
+            <button class="nav-button next" onclick="navigate(1)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Envelope animation
+        const envelope = document.getElementById('envelope');
+        const mainContent = document.getElementById('mainContent');
+
+        envelope.addEventListener('click', () => {
+            envelope.querySelector('.envelope').classList.add('open');
+            setTimeout(() => {
+                envelope.style.transform = 'scale(0)';
+                mainContent.classList.add('visible');
+            }, 1000);
+        });
+
+        // Carousel functionality
+        const cards = document.querySelectorAll('.card');
+        let currentPosition = 1;
+
+        function navigate(direction) {
+            currentPosition = (currentPosition + direction + cards.length) % cards.length;
+            updateCards();
+        }
+
+        function updateCards() {
+            cards.forEach((card, index) => {
+                let offset = ((index - currentPosition) * 100);
+                card.style.transform = `translateX(${offset}%)`;
+                card.style.opacity = index === currentPosition ? '1' : '0.7';
+                card.style.scale = index === currentPosition ? '1' : '0.8';
+            });
+        }
+
+        // Initial setup
+        updateCards();
+
+        // Add touch support
+        let touchStartX = 0;
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.touches[0].clientX;
+        });
+
+        document.addEventListener('touchend', e => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 50) {
+                navigate(diff > 0 ? 1 : -1);
+            }
+        });
+
+        // Add floating hearts
+        function createHearts() {
+            const container = document.body;
+            for(let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-decoration';
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = Math.random() * 100 + 'vh';
+                heart.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(heart);
+            }
+        }
+
+        createHearts();
+    </script>
+</body>
+</html>
